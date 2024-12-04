@@ -28,6 +28,9 @@ def subgrids(matrix, size=3):
 def count_pattern(pattern, puzzle):
     return sum(len(re.findall(pattern, line)) for line in puzzle) + sum(len(re.findall(pattern, line[::-1])) for line in puzzle)
 
+def concat(list):
+    return ["".join(line) for line in list]
+
 with open("input.txt") as input:
     lines = input.readlines()
     
@@ -36,17 +39,16 @@ with open("input.txt") as input:
     puzzle_diagonals = diagonals(puzzle)
     puzzle_antidiagonals = antidiagonals(puzzle)
 
-    straight = ["".join(line) for line in puzzle]
-    transposed = ["".join(line) for line in puzzle_T]
-    diagonals = ["".join(line) for line in puzzle_diagonals]
-    antidiagonals = ["".join(line) for line in puzzle_antidiagonals]
+    searchpaths = []
+    transformations = [puzzle, puzzle_T, puzzle_diagonals, puzzle_antidiagonals]
+    for transformation in transformations:
+        searchpaths.append(concat(transformation))
 
     pattern = "XMAS"
     match = 0
 
-    ways = [straight, transposed, diagonals, antidiagonals]
-    for way in ways:
-        match += count_pattern(pattern, way)
+    for searchpath in searchpaths:
+        match += count_pattern(pattern, searchpath)
     
     print(match)
 
